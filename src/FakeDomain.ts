@@ -1,0 +1,95 @@
+export type TestStatus = 'not-run' | 'pass' | 'fail' | 'running'
+
+export type ProductID = number
+export type SpecID = number
+export type TestID = number
+export type AssertionID = number
+
+export interface Product {
+  id: ProductID
+  name: string
+  spec: Spec[]
+}
+
+export interface Spec {
+  id: SpecID
+  relativePath: string
+  tests: Test[]
+}
+
+export interface Test {
+  id: TestID
+  parentId?: TestID
+  description: string
+  status: TestStatus
+}
+
+export interface Assertion {
+  id: AssertionID
+}
+
+export type AggRoot = { activeProducts: Product[] }
+
+export class Ping { kind = 'ping' }
+export class Pong { kind = 'pong' }
+
+type PRODUCT_OPENED = 'product:opened'
+type PRODUCT_UPDATED = 'product:updated'
+type PRODUCT_CLOSED = 'product:closed'
+
+type PRODUCT_RUN_STARTED = 'product:run-started'
+type PRODUCT_RUN_COMPLETED = 'product:run-completed'
+
+type SPEC_RUN_STARTED = 'spec:run-started'
+type SPEC_RUN_COMPLETED = 'spec:run-started'
+
+type TEST_RUN_STARTED = 'test:run-started'
+type TEST_RUN_COMPLETED = 'test:run-completed'
+
+type ASSERT_RUN_STARTED = 'assert:run-started'
+type ASSERT_RUN_COMPLETED = 'assert:run-completed'
+
+type EventKind = PRODUCT_OPENED
+               | PRODUCT_UPDATED
+               | PRODUCT_CLOSED
+
+export interface ProductOpened {
+  kind: PRODUCT_OPENED
+  product: Product
+}
+
+export interface ProductUpdated {
+  kind: PRODUCT_UPDATED
+  productId: ProductID
+}
+
+export interface ProductClosed {
+  kind: PRODUCT_CLOSED
+  productId: ProductID
+}
+
+export interface ProductRunStarted {
+  kind: PRODUCT_RUN_STARTED
+  productId: ProductID
+}
+
+export interface ProductRunCompleted {
+  kind: PRODUCT_RUN_COMPLETED
+  productId: ProductID
+}
+
+export interface SpecRunStarted {
+  kind: SPEC_RUN_STARTED
+  productId: ProductID
+  specId: SpecID
+}
+
+export interface SpecRunCompleted {
+  kind: SPEC_RUN_STARTED
+  productId: ProductID
+  specId: SpecID
+}
+
+export type Event = Ping
+                  | Pong
+                  | ProductOpened
