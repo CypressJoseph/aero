@@ -1,4 +1,4 @@
-export type TestStatus = 'not-run' | 'pass' | 'fail' | 'running'
+export type Status = 'not-run' | 'pass' | 'fail' | 'running'
 
 export type ProductID = number
 export type SpecID = number
@@ -8,7 +8,8 @@ export type AssertionID = number
 export interface Product {
   id: ProductID
   name: string
-  spec: Spec[]
+  specs: Spec[]
+  status: Status
 }
 
 export interface Spec {
@@ -21,7 +22,7 @@ export interface Test {
   id: TestID
   parentId?: TestID
   description: string
-  status: TestStatus
+  status: Status
 }
 
 export interface Assertion {
@@ -88,7 +89,3 @@ export interface SpecRunCompleted {
   productId: ProductID
   specId: SpecID
 }
-
-export type Event = ProductOpened
-                  | ProductRunStarted
-                  | ProductRunCompleted

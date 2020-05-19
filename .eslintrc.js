@@ -21,5 +21,6 @@ module.exports = {
     'jest'
   ],
   rules: {
+    'no-unused-vars': 'off'
   }
 }
