@@ -30,14 +30,13 @@ export interface Assertion {
 
 export type AggRoot = { activeProducts: Product[] }
 
-export class Ping { kind = 'ping' }
-export class Pong { kind = 'pong' }
-
 type PRODUCT_OPENED = 'product:opened'
 type PRODUCT_UPDATED = 'product:updated'
 type PRODUCT_CLOSED = 'product:closed'
 
 type PRODUCT_RUN_STARTED = 'product:run-started'
+type PRODUCT_RUN_PASSED = 'product:run-passed'
+type PRODUCT_RUN_FAILED = 'product:run-failed'
 type PRODUCT_RUN_COMPLETED = 'product:run-completed'
 
 type SPEC_RUN_STARTED = 'spec:run-started'
@@ -90,6 +89,6 @@ export interface SpecRunCompleted {
   specId: SpecID
 }
 
-export type Event = Ping
-                  | Pong
-                  | ProductOpened
+export type Event = ProductOpened
+                  | ProductRunStarted
+                  | ProductRunCompleted
