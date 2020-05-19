@@ -1,27 +1,23 @@
-import { Observable } from 'rxjs'
+import { Subject } from 'rxjs'
 
 type EventHandler<T> = (event: T) => void
 
 export class Aero<Event extends { kind: string }> {
-  constructor (private observable: Observable<Event>) {
-    console.log('OBSERVABLE: ' + this.observable)
+  constructor (private subject: Subject<Event> = new Subject()) {
+    console.log('OBSERVABLE: ' + this.subject)
   }
 
-  on<T extends Event> (kind: string, handler: EventHandler<T>) {
-    this.registerHandler(kind, handler)
-    // let handlerPipe = this.observable.filter((event: T) => event.kind === kind)
+  on<T extends Event> (kind: string, handle: EventHandler<T>) {
+    this.subject.subscribe(event => event.kind === kind && handle(event as T))
   }
 
   async dispatch<T extends Event> (event: T) {
     this.store(event)
-    const handler: EventHandler<T> = this.handlers[event.kind] // kind]
-    handler.call(this, event)
+    this.subject.next(event)
+    // this.subject.
+    // const handler: EventHandler<T> = this.handlers[event.kind] // kind]
+    // handler.call(this, event)
   }
-
-    handlers: { [kind: string]: EventHandler<any> } = {}
-    private registerHandler<T extends Event> (kind: string, handler: EventHandler<T>) {
-      this.handlers[kind] = handler
-    }
 
     events: Event[] = []
     private store (event: Event) {

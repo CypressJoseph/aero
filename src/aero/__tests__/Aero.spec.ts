@@ -1,12 +1,10 @@
 import pkg from '../../../package.json'
 import { Aero } from '../Aero'
-import { Observable } from 'rxjs'
 // eslint-disable-next-line no-unused-vars
 import { Event, Ping, Pong } from '../../FakeDomain'
+
 describe(pkg.name, () => {
-  // const aggRoot = {}
-  const observable: Observable<Event> = new Observable()
-  const aero: Aero<Event> = new Aero(observable)
+  const aero: Aero<Event> = new Aero()
   it('is awesome', () => {
     // expect(aggRoot.products[0].name).toBe('Aero')
     expect(true).toBe(true)
