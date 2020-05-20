@@ -7,7 +7,10 @@ export class SpecStory extends ProductStory {
   startsWith = 'spec:run-started'
   endsWith = 'spec:run-completed'
 
-  runStarted () { }
+  runStarted () {
+    this.spec = { ...this.spec, status: 'running' }
+  }
+
   runCompleted (e: RunCompleteEvent) {
     this.spec = { ...this.spec, status: e.status }
   }
