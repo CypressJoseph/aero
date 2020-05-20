@@ -1,5 +1,5 @@
 import { Story } from '../aero'
-import { ProductOpened, Product, ProductRunStarted } from './types'
+import { ProductOpened, Product, ProductRunStarted, ProductRunCompleted, RunCompleteEvent } from './types'
 import { productStore } from './store'
 
 export class ProductStory extends Story {
@@ -18,12 +18,12 @@ export class ProductStory extends Story {
     this.product = { ...this.product, status: 'running' }
   }
 
-  runCompleted () {
+  runCompleted (runComplete: RunCompleteEvent) {
     this.log('run completed')
-    this.product = { ...this.product, status: 'pass' }
+    this.product = { ...this.product, status: runComplete.status }
   }
 
-  private get productId () { return this.context.productId }
-  private get product () { return productStore.get(this.productId) }
-  private set product (prod: Product) { productStore.set(this.productId, prod) }
+  protected get productId () { return this.context.productId }
+  protected get product () { return productStore.get(this.productId) }
+  protected set product (prod: Product) { productStore.set(this.productId, prod) }
 }

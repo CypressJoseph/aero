@@ -70,16 +70,17 @@ export interface ProductOpened {
 //   productId: ProductID
 // }
 
+export type RunCompleteEvent = { status: Status }
+
 export interface ProductRunStarted {
   kind: PRODUCT_RUN_STARTED
   productId: ProductID
 }
 
-export interface ProductRunCompleted {
+export type ProductRunCompleted = {
   kind: PRODUCT_RUN_COMPLETED
   productId: ProductID
-  status: Status
-}
+} & RunCompleteEvent
 
 export interface SpecRunStarted {
   kind: SPEC_RUN_STARTED
@@ -87,12 +88,11 @@ export interface SpecRunStarted {
   specId: SpecID
 }
 
-export interface SpecRunCompleted {
+export type SpecRunCompleted = {
   kind: SPEC_RUN_COMPLETED
   productId: ProductID
   specId: SpecID
-  status: Status
-}
+} & RunCompleteEvent
 
 export type TrialEvent = ProductOpened
                        | ProductRunStarted
