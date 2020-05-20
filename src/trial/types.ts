@@ -15,6 +15,7 @@ export interface Product {
 export interface Spec {
   id: SpecID
   relativePath: string
+  status: Status
   tests: Test[]
 }
 
@@ -41,7 +42,7 @@ type PRODUCT_RUN_FAILED = 'product:run-failed'
 type PRODUCT_RUN_COMPLETED = 'product:run-completed'
 
 type SPEC_RUN_STARTED = 'spec:run-started'
-type SPEC_RUN_COMPLETED = 'spec:run-started'
+type SPEC_RUN_COMPLETED = 'spec:run-completed'
 
 type TEST_RUN_STARTED = 'test:run-started'
 type TEST_RUN_COMPLETED = 'test:run-completed'
@@ -59,15 +60,15 @@ export interface ProductOpened {
   productId: ProductID
 }
 
-export interface ProductUpdated {
-  kind: PRODUCT_UPDATED
-  productId: ProductID
-}
+// export interface ProductUpdated {
+//   kind: PRODUCT_UPDATED
+//   productId: ProductID
+// }
 
-export interface ProductClosed {
-  kind: PRODUCT_CLOSED
-  productId: ProductID
-}
+// export interface ProductClosed {
+//   kind: PRODUCT_CLOSED
+//   productId: ProductID
+// }
 
 export interface ProductRunStarted {
   kind: PRODUCT_RUN_STARTED
@@ -77,6 +78,7 @@ export interface ProductRunStarted {
 export interface ProductRunCompleted {
   kind: PRODUCT_RUN_COMPLETED
   productId: ProductID
+  status: Status
 }
 
 export interface SpecRunStarted {
@@ -86,7 +88,14 @@ export interface SpecRunStarted {
 }
 
 export interface SpecRunCompleted {
-  kind: SPEC_RUN_STARTED
+  kind: SPEC_RUN_COMPLETED
   productId: ProductID
   specId: SpecID
+  status: Status
 }
+
+export type TrialEvent = ProductOpened
+                       | ProductRunStarted
+                       | ProductRunCompleted
+                       | SpecRunStarted
+                       | SpecRunCompleted

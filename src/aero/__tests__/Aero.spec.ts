@@ -1,28 +1,35 @@
 import pkg from '../../../package.json'
 import { Aero } from '../Aero'
-import { ProductOpened, ProductRunStarted, ProductRunCompleted } from '../../trial/types'
+import { TrialEvent } from '../../trial/types'
 import { ProductStory } from '../../trial/ProductStory'
 import { productStore } from '../../trial/store'
 import { Observable } from 'rxjs'
+import { SpecStory } from '../../trial/SpecStory'
 
-export type Event = ProductOpened
-                  | ProductRunStarted
-                  | ProductRunCompleted
+const noop = () => {}
 
 describe(pkg.name, () => {
-  const aero: Aero<Event> = new Aero(new Observable((subscriber) => {
+  const aero: Aero<TrialEvent> = new Aero(new Observable((subscriber) => {
     subscriber.next({ kind: 'product:opened', productId: 'the-product' })
     subscriber.next({ kind: 'product:run-started', productId: 'the-product' })
-    subscriber.next({ kind: 'product:run-completed', productId: 'the-product' })
+    subscriber.next({ kind: 'spec:run-started', productId: 'the-product', specId: 'the-spec' })
+    subscriber.next({ kind: 'spec:run-completed', productId: 'the-product', specId: 'the-spec', status: 'pass' })
+    subscriber.next({ kind: 'product:run-completed', productId: 'the-product', status: 'pass' })
   }))
+  const fly = () => aero.fly({ next: noop, error: noop, complete: noop })
 
-  it('saga', async () => {
-    aero.play(ProductStory)
-    aero.fly({
-      next: event => console.log(event.kind),
-      error: error => console.log(error),
-      complete: () => console.log('complete')
+  describe('story', () => {
+    it('product lifecycle', async () => {
+      aero.play(ProductStory)
+      fly()
+      expect(productStore.get('the-product').status).toBe('pass')
     })
-    expect(productStore.get('the-product').status).toBe('pass')
+    it.skip('spec lifecycle', async () => {
+      aero.play(ProductStory)
+      aero.play(SpecStory)
+      fly()
+      expect(productStore.get('the-product').specs?.length).toBe(1)
+      expect(productStore.get('the-product').specs[0].status).toBe('pass')
+    })
   })
 })

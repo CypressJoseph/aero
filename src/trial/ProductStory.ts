@@ -2,16 +2,18 @@ import { Story } from '../aero'
 import { ProductOpened, Product, ProductRunStarted } from './types'
 import { productStore } from './store'
 
-export class ProductStory extends Story<Event> {
+export class ProductStory extends Story {
   name = 'Product Lifecycle'
   respondsTo = ['product:run-started', 'product:run-completed']
   correlatedOn = ['productId']
   startsWith = 'product:opened'
   endsWith = 'product:closed'
 
-  opened () { this.log('product open!') }
+  opened () {
+    this.log('product open!')
+  }
 
-  runStarted (started: ProductRunStarted) {
+  runStarted () {
     this.log('run started')
     this.product = { ...this.product, status: 'running' }
   }
@@ -21,7 +23,6 @@ export class ProductStory extends Story<Event> {
     this.product = { ...this.product, status: 'pass' }
   }
 
-  private log (message: string) { console.log(`${this.name} [productId=${this.productId}]: ${message}`) }
   private get productId () { return this.context.productId }
   private get product () { return productStore.get(this.productId) }
   private set product (prod: Product) { productStore.set(this.productId, prod) }

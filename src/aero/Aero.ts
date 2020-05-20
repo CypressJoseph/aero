@@ -1,17 +1,18 @@
-import { Subject, Observable, Observer } from 'rxjs'
+import { Observable, Observer } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import { toCamel } from './util'
 
-type AbstractEvent = { kind: string } // ; [attr: string]: any }
-type EventHandler<T> = (event: T) => void
+type AbstractEvent = { kind: string }
 
-export abstract class Story<T> {
+export abstract class Story {
   context: any = {}
   abstract name: string;
   abstract correlatedOn: string[];
   abstract startsWith: string;
   abstract endsWith: string;
   abstract respondsTo: string[];
+
+  protected log (message: string) { console.log(`${this.name} [${JSON.stringify(this.context)}]: ${message}`) }
 }
 
 export class Aero<Event extends AbstractEvent> {
@@ -20,26 +21,22 @@ export class Aero<Event extends AbstractEvent> {
 
   fly (pilot: Observer<Event>) { this.observable.subscribe(pilot) }
 
-  on (kind: string, handle: EventHandler<AbstractEvent>) {
-    const stream = this.observable.pipe(filter(event => event.kind === kind))
-    stream.subscribe(handle)
-  }
-
-  play (StoryKind: new () => Story<Event>) {
+  play (StoryKind: new () => Story) {
     const storyTemplate = new StoryKind()
     const matchesBeginning = filter((e: Event) => e.kind === storyTemplate.startsWith)
-    this.observable.pipe(matchesBeginning).forEach((initialEvent: any) => {
+    const handleStoryEvent = (initialEvent: Event) => {
       const matchesElements = filter((e: Event) => storyTemplate.correlatedOn.every(
-        (correlated: string) => initialEvent[correlated] === (e as any)[correlated]
+        (correlated: string) => (initialEvent as any)[correlated] === (e as any)[correlated]
       ))
       const journey: any = new StoryKind()
-      const ctx = storyTemplate.correlatedOn.map((attr: string) => [attr, initialEvent[attr]])
+      const ctx = storyTemplate.correlatedOn.map((attr: string) => [attr, (initialEvent as any)[attr]])
       journey.context = Object.fromEntries(ctx)
       this.observable.pipe(matchesElements).forEach(event => {
         const step: string = toCamel(event.kind.split(':')[1])
         const fn: Function = journey[step]
         if (fn) { fn.call(journey, event) } else { journey.log(`warning: missing story event handler for ${event.kind} -- ${step}() {...}`) }
       })
-    })
+    }
+    this.observable.pipe(matchesBeginning).forEach(handleStoryEvent)
   }
 }
