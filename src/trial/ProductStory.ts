@@ -3,16 +3,13 @@ import { ProductOpened, Product, ProductRunStarted } from './types'
 import { productStore } from './store'
 
 export class ProductStory extends Story<Event> {
-  name: string = 'Product Lifecycle'
-  respondsTo: string[] = ['product:run-started', 'product:run-completed']
-  get correlatedOn () { return ['productId'] }
-  get startsWith () { return 'product:opened' }
+  name = 'Product Lifecycle'
+  respondsTo = ['product:run-started', 'product:run-completed']
+  correlatedOn = ['productId']
+  startsWith = 'product:opened'
+  endsWith = 'product:closed'
 
-  open (opened: ProductOpened) {
-    this.log(`product opened: ${opened}`)
-    // productStore[this.productId] = { ...(opened.product) }
-    this.product = { ...opened.product }
-  }
+  opened () { this.log('product open!') }
 
   runStarted (started: ProductRunStarted) {
     this.log('run started')
@@ -24,8 +21,8 @@ export class ProductStory extends Story<Event> {
     this.product = { ...this.product, status: 'pass' }
   }
 
-  private log (message: string) { console.log(`[product story (productId=${this.productId})]`, message) }
+  private log (message: string) { console.log(`${this.name} [productId=${this.productId}]: ${message}`) }
   private get productId () { return this.context.productId }
-  private get product () { return productStore[this.productId] }
-  private set product (prod: Product) { productStore[this.productId] = prod }
+  private get product () { return productStore.get(this.productId) }
+  private set product (prod: Product) { productStore.set(this.productId, prod) }
 }

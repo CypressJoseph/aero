@@ -3,33 +3,26 @@ import { Aero } from '../Aero'
 import { ProductOpened, ProductRunStarted, ProductRunCompleted } from '../../trial/types'
 import { ProductStory } from '../../trial/ProductStory'
 import { productStore } from '../../trial/store'
+import { Observable } from 'rxjs'
 
 export type Event = ProductOpened
                   | ProductRunStarted
                   | ProductRunCompleted
 
 describe(pkg.name, () => {
-  const aero: Aero<Event> = new Aero()
-  it('saga', async () => {
-    // aero.on()
+  const aero: Aero<Event> = new Aero(new Observable((subscriber) => {
+    subscriber.next({ kind: 'product:opened', productId: 'the-product' })
+    subscriber.next({ kind: 'product:run-started', productId: 'the-product' })
+    subscriber.next({ kind: 'product:run-completed', productId: 'the-product' })
+  }))
 
+  it('saga', async () => {
     aero.play(ProductStory)
-    expect(Object.entries(productStore).length).toBe(0)
-    await aero.dispatch({
-      kind: 'product:opened',
-      product: {
-        id: 12345,
-        name: 'Aero',
-        specs: [],
-        status: 'not-run'
-      },
-      productId: 12345
+    aero.fly({
+      next: event => console.log(event.kind),
+      error: error => console.log(error),
+      complete: () => console.log('complete')
     })
-    console.log('after open, prod store: ' + JSON.stringify(productStore))
-    // TODO expect(productStore['12345'].status).toBe('not-run')
-    await aero.dispatch({ kind: 'product:run-started', productId: 12345 })
-    expect(productStore['12345'].status).toBe('running')
-    await aero.dispatch({ kind: 'product:run-completed', productId: 12345 })
-    expect(productStore['12345'].status).toBe('pass')
+    expect(productStore.get('the-product').status).toBe('pass')
   })
 })

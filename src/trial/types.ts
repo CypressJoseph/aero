@@ -1,9 +1,9 @@
 export type Status = 'not-run' | 'pass' | 'fail' | 'running'
 
-export type ProductID = number
-export type SpecID = number
-export type TestID = number
-export type AssertionID = number
+export type ProductID = string
+export type SpecID = string
+export type TestID = string
+export type AssertionID = string
 
 export interface Product {
   id: ProductID
@@ -55,7 +55,7 @@ type EventKind = PRODUCT_OPENED
 
 export interface ProductOpened {
   kind: PRODUCT_OPENED
-  product: Product
+  // product: Product
   productId: ProductID
 }
 
