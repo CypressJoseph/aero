@@ -9,3 +9,4 @@ class Store<T, ID extends string> {
 
 // export const productStore: { [productId: string]: Product} = {}
 export const productStore: Store<Product, ProductID> = new Store()
+// export const productStore: Store<Product, ProductID> = new Store()

@@ -24,9 +24,8 @@ describe(pkg.name, () => {
       fly()
       expect(productStore.get('the-product').status).toBe('pass')
     })
-    it.skip('spec lifecycle', async () => {
-      aero.play(ProductStory)
-      aero.play(SpecStory)
+    fit('spec lifecycle', async () => {
+      aero.play(ProductStory, SpecStory)
       fly()
       expect(productStore.get('the-product').specs?.length).toBe(1)
       expect(productStore.get('the-product').specs[0].status).toBe('pass')

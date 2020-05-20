@@ -3,14 +3,14 @@ import { ProductOpened, Product, ProductRunStarted } from './types'
 import { productStore } from './store'
 
 export class ProductStory extends Story {
-  name = 'Product Lifecycle'
+  name = 'product'
   respondsTo = ['product:run-started', 'product:run-completed']
   correlatedOn = ['productId']
   startsWith = 'product:opened'
   endsWith = 'product:closed'
 
   opened () {
-    this.log('product open!')
+    this.log('opened!')
   }
 
   runStarted () {
