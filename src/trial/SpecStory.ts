@@ -8,9 +8,8 @@ export class SpecStory extends ProductStory {
   startsWith = 'spec:run-started'
   endsWith = 'spec:run-completed'
 
-  runStarted () { this.log('start spec run!') }
+  runStarted () { }
   runCompleted (e: RunCompleteEvent) {
-    this.log('finish spec run with status: ' + e.status)
     this.spec = { ...this.spec, status: e.status }
   }
 
@@ -25,7 +24,6 @@ export class SpecStory extends ProductStory {
   }
 
   private set spec (updated: Spec) {
-    const theSpec: Spec = this.spec
-    Object.entries(updated).forEach(([attr, val]) => { (theSpec as any)[attr] = val })
+    Object.entries(updated).forEach(([attr, val]) => { (this.spec as any)[attr] = val })
   }
 }

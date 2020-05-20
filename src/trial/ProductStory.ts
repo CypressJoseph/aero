@@ -1,5 +1,5 @@
 import { Story } from '../aero'
-import { ProductOpened, Product, ProductRunStarted, ProductRunCompleted, RunCompleteEvent } from './types'
+import { Product, RunCompleteEvent } from './types'
 import { productStore } from './store'
 
 export class ProductStory extends Story {
@@ -9,17 +9,13 @@ export class ProductStory extends Story {
   startsWith = 'product:opened'
   endsWith = 'product:closed'
 
-  opened () {
-    this.log('opened!')
-  }
+  opened () {}
 
   runStarted () {
-    this.log('run started')
     this.product = { ...this.product, status: 'running' }
   }
 
   runCompleted (runComplete: RunCompleteEvent) {
-    this.log('run completed')
     this.product = { ...this.product, status: runComplete.status }
   }
 

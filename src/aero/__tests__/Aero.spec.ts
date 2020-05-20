@@ -13,6 +13,8 @@ describe(pkg.name, () => {
     subscriber.next({ kind: 'product:opened', productId: 'the-product' })
     subscriber.next({ kind: 'product:run-started', productId: 'the-product' })
     subscriber.next({ kind: 'spec:run-started', productId: 'the-product', specId: 'the-spec' })
+    subscriber.next({ kind: 'test:run-started', productId: 'the-product', specId: 'the-spec', testId: 'the-test' })
+    subscriber.next({ kind: 'test:run-completed', productId: 'the-product', specId: 'the-spec', testId: 'the-test', status: 'pass' })
     subscriber.next({ kind: 'spec:run-completed', productId: 'the-product', specId: 'the-spec', status: 'pass' })
     subscriber.next({ kind: 'product:run-completed', productId: 'the-product', status: 'pass' })
   }))

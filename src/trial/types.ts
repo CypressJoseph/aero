@@ -24,51 +24,30 @@ export interface Test {
   parentId?: TestID
   description: string
   status: Status
+  assertions: Assertion[]
 }
 
 export interface Assertion {
   id: AssertionID
+  expected: string
+  actual: string
+  status: Status
 }
 
-export type AggRoot = { activeProducts: Product[] }
-
 type PRODUCT_OPENED = 'product:opened'
-type PRODUCT_UPDATED = 'product:updated'
-type PRODUCT_CLOSED = 'product:closed'
-
 type PRODUCT_RUN_STARTED = 'product:run-started'
-type PRODUCT_RUN_PASSED = 'product:run-passed'
-type PRODUCT_RUN_FAILED = 'product:run-failed'
 type PRODUCT_RUN_COMPLETED = 'product:run-completed'
-
 type SPEC_RUN_STARTED = 'spec:run-started'
 type SPEC_RUN_COMPLETED = 'spec:run-completed'
-
 type TEST_RUN_STARTED = 'test:run-started'
 type TEST_RUN_COMPLETED = 'test:run-completed'
-
 type ASSERT_RUN_STARTED = 'assert:run-started'
 type ASSERT_RUN_COMPLETED = 'assert:run-completed'
 
-type EventKind = PRODUCT_OPENED
-               | PRODUCT_UPDATED
-               | PRODUCT_CLOSED
-
 export interface ProductOpened {
   kind: PRODUCT_OPENED
-  // product: Product
   productId: ProductID
 }
-
-// export interface ProductUpdated {
-//   kind: PRODUCT_UPDATED
-//   productId: ProductID
-// }
-
-// export interface ProductClosed {
-//   kind: PRODUCT_CLOSED
-//   productId: ProductID
-// }
 
 export type RunCompleteEvent = { status: Status }
 
@@ -94,8 +73,24 @@ export type SpecRunCompleted = {
   specId: SpecID
 } & RunCompleteEvent
 
+export interface TestRunStarted {
+  kind: TEST_RUN_STARTED
+  productId: ProductID
+  specId: SpecID
+  testId: TestID
+}
+
+export type TestRunCompleted = {
+  kind: TEST_RUN_COMPLETED
+  productId: ProductID
+  specId: SpecID
+  testId: TestID
+} & RunCompleteEvent
+
 export type TrialEvent = ProductOpened
                        | ProductRunStarted
                        | ProductRunCompleted
                        | SpecRunStarted
                        | SpecRunCompleted
+                       | TestRunStarted
+                       | TestRunCompleted

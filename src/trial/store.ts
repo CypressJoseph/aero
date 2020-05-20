@@ -7,6 +7,4 @@ class Store<T, ID extends string> {
     get size () { return Object.entries(this._store).length }
 }
 
-// export const productStore: { [productId: string]: Product} = {}
 export const productStore: Store<Product, ProductID> = new Store()
-// export const productStore: Store<Product, ProductID> = new Store()
