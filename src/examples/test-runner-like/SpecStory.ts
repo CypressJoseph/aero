@@ -1,6 +1,6 @@
 import { Spec, RunCompleteEvent } from './types'
 import { ProductStory } from './ProductStory'
-import { findOrCreateById, update } from '../aero/util'
+import { findOrCreateById, update } from '../../aero/util'
 
 export class SpecStory extends ProductStory {
   name = 'spec'
@@ -9,7 +9,8 @@ export class SpecStory extends ProductStory {
   endsWith = 'spec:run-completed'
 
   runStarted () {
-    this.spec = { ...this.spec, status: 'running' }
+    // this.log('spec:run-started? ')
+    this.spec.status = 'running'
   }
 
   runCompleted (e: RunCompleteEvent) {

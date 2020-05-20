@@ -1,4 +1,4 @@
-import { Story } from '../aero'
+import { Story } from '../../aero'
 import { Product, RunCompleteEvent } from './types'
 import { productStore } from './store'
 

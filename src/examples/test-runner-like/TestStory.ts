@@ -1,6 +1,6 @@
 import { SpecStory } from './SpecStory'
 import { RunCompleteEvent, Test } from './types'
-import { findOrCreateById, update } from '../aero/util'
+import { findOrCreateById, update } from '../../aero/util'
 
 export class TestStory extends SpecStory {
     name = 'test'
@@ -8,9 +8,11 @@ export class TestStory extends SpecStory {
     startsWith = 'test:run-started'
     endsWith = 'test:run-completed'
 
+    runStarted () {}
+
     runCompleted (e: RunCompleteEvent) {
       this.test = { ...this.test, status: e.status }
-      this.log('complete: ' + e.status + ' -- ' + JSON.stringify(this.test))
+      this.log('completed: ' + e.status + ' -- ' + JSON.stringify(this.test))
     }
 
     private get testId () { return this.context.testId }
