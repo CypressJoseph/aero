@@ -9,16 +9,10 @@ export class SpecStory extends ProductStory {
   startsWith = 'spec:run-started'
   endsWith = 'spec:run-completed'
 
-  runStarted () {
-    this.spec.status = 'running'
-  }
+  runStarted () {}
 
-  runCompleted (e: RunCompleteEvent) {
-    // sort of annoying this works??
-    this.spec.status = e.status // = { ...this.spec, status: e.status }
-  }
+  runCompleted (e: RunCompleteEvent) { this.spec.status = e.status }
 
   protected get specId () { return this.context.specId }
   protected get spec (): Spec { return lookupSpec(this.specId, this.productId) }
-  // protected set spec (updated: Spec) { update(this.spec, updated) }
 }

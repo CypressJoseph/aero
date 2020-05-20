@@ -9,9 +9,10 @@ export class AssertionStory extends TestStory {
     endsWith = 'assert:run-completed'
 
     runStarted () {}
-    runCompleted (e: RunCompleteEvent) { this.assertion.status = e.status }
+    runCompleted (e: RunCompleteEvent) {
+      this.assertion.status = e.status
+    }
 
     protected get assertId () { return this.context.assertionId }
     protected get assertion (): Assertion { return lookupAssertion(this.assertId, this.testId, this.specId, this.productId) }
-    // protected set test (updated: Test) { update(this.test, updated) }
 }
