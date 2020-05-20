@@ -1,5 +1,6 @@
 import { Spec, RunCompleteEvent } from './types'
 import { ProductStory } from './ProductStory'
+import { findOrCreateById, update } from '../aero/util'
 
 export class SpecStory extends ProductStory {
   name = 'spec'
@@ -15,17 +16,14 @@ export class SpecStory extends ProductStory {
     this.spec = { ...this.spec, status: e.status }
   }
 
-  private get specId () { return this.context.specId }
-  private get spec (): Spec {
+  protected get specId () { return this.context.specId }
+  protected get spec (): Spec {
     this.product.specs = this.product.specs || []
-    const existing: Spec | undefined = this.product.specs.find(spec => spec.id === this.specId)
-    if (existing) { return existing }
-    const spec: Spec = { id: this.specId, relativePath: '??', status: 'not-run', tests: [] }
-    this.product.specs.push(spec)
-    return spec
+    const nullSpec: Spec = { id: this.specId, relativePath: '??', status: 'not-run', tests: [] }
+    return findOrCreateById(this.product.specs, this.specId, nullSpec)
   }
 
-  private set spec (updated: Spec) {
-    Object.entries(updated).forEach(([attr, val]) => { (this.spec as any)[attr] = val })
+  protected set spec (updated: Spec) {
+    update(this.spec, updated)
   }
 }

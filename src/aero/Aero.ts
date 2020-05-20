@@ -41,14 +41,16 @@ export class Aero<Event extends AbstractEvent> {
       ))
       const ctx = correlate.map((attr: string) => [attr, (initialEvent as any)[attr]])
       story.context = Object.fromEntries(ctx)
-      this.observable.pipe(correlatedEvents).forEach(event => {
+      const stream = this.observable.pipe(correlatedEvents)
+      stream.forEach(event => {
         const journeyName = event.kind.split(':')[0]
         // n.b. we want to be careful here -- force the first half of event.kind to match story name
         if (journeyName !== story.name) { return }
         const journeyAction: string = toCamel(event.kind.split(':')[1])
         const eventHandler: Function = (story as any)[journeyAction]
         const missingEventHandler = `warning: missing story event handler for ${event.kind}, e.g.: \n\n    class ${StoryKind.name} { ${journeyAction}() {...} }`
-        if (eventHandler) { eventHandler.call(story, event) } else { console.warn(missingEventHandler) }
+        if (eventHandler) { eventHandler.call(story, event, stream) } else { console.warn(missingEventHandler) }
+        // hmmm, after we've seen the end event...
       })
     }
   }

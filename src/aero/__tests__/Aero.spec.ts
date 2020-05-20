@@ -5,6 +5,7 @@ import { TrialEvent } from '../../trial/types'
 import { ProductStory } from '../../trial/ProductStory'
 import { productStore } from '../../trial/store'
 import { SpecStory } from '../../trial/SpecStory'
+import { TestStory } from '../../trial/TestStory'
 
 describe(pkg.name, () => {
   const aero: Aero<TrialEvent> = new Aero(new Observable((subscriber) => {
@@ -28,6 +29,18 @@ describe(pkg.name, () => {
       fly()
       expect(productStore.get('the-product').specs?.length).toBe(1)
       expect(productStore.get('the-product').specs[0].status).toBe('pass')
+    })
+    it('test lifecycle', async () => {
+      aero.play(ProductStory, SpecStory, TestStory)
+      fly()
+      expect(productStore.get('the-product').specs?.length).toBe(1)
+
+      expect(productStore.get('the-product').specs[0].tests?.length).toBe(1)
+      expect(productStore.get('the-product').specs[0].tests[0].status).toBe('pass')
+
+      // okay, but why doesn't this get set :D
+      // expect(productStore.get('the-product').specs[0].status).toBe('pass')
+
     })
   })
 })
