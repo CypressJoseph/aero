@@ -4,26 +4,32 @@ import { ProductOpened, ProductRunStarted, ProductRunCompleted } from '../../tri
 import { ProductStory } from '../../trial/ProductStory'
 import { productStore } from '../../trial/store'
 
-export type Event = ProductRunStarted
+export type Event = ProductOpened
+                  | ProductRunStarted
                   | ProductRunCompleted
 
 describe(pkg.name, () => {
   const aero: Aero<Event> = new Aero()
   it('saga', async () => {
-    // let sawStarted = false
-    // let sawCompleted = false
-    aero.play(ProductStory)
-    // 'product:run-started', [], 'product:run-completed', 'productId', (event, ctx) => {
-    //   if (event.kind === 'product:run-started') { sawStarted = true }
-    //   if (event.kind === 'product:run-completed') { sawCompleted = true }
-    // })
-    // await aero.dispatch({ kind: 'product:run-started', productId: 12345 })
-    await aero.dispatch({ kind: 'product:run-started', productId: 12345 })
-    await aero.dispatch({ kind: 'product:run-completed', productId: 12345 })
+    // aero.on()
 
-    console.log(productStore)
+    aero.play(ProductStory)
+    expect(Object.entries(productStore).length).toBe(0)
+    await aero.dispatch({
+      kind: 'product:opened',
+      product: {
+        id: 12345,
+        name: 'Aero',
+        specs: [],
+        status: 'not-run'
+      },
+      productId: 12345
+    })
+    console.log('after open, prod store: ' + JSON.stringify(productStore))
+    // TODO expect(productStore['12345'].status).toBe('not-run')
+    await aero.dispatch({ kind: 'product:run-started', productId: 12345 })
+    expect(productStore['12345'].status).toBe('running')
+    await aero.dispatch({ kind: 'product:run-completed', productId: 12345 })
     expect(productStore['12345'].status).toBe('pass')
-    // expect(sawStarted).toBe(true)
-    // expect(sawCompleted).toBe(true)
   })
 })

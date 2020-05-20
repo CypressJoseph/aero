@@ -56,6 +56,7 @@ type EventKind = PRODUCT_OPENED
 export interface ProductOpened {
   kind: PRODUCT_OPENED
   product: Product
+  productId: ProductID
 }
 
 export interface ProductUpdated {
