@@ -4,12 +4,9 @@ import { productStore } from './store'
 
 export class ProductStory extends Story {
   name = 'product'
-  respondsTo = ['product:run-started', 'product:run-completed']
   correlatedOn = ['productId']
-  startsWith = 'product:opened'
-  endsWith = 'product:closed'
-
-  opened () {}
+  startsWith = 'product:run-started'
+  endsWith = 'product:run-completed'
 
   runStarted () {
     this.product = { ...this.product, status: 'running' }

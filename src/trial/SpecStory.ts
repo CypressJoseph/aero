@@ -3,7 +3,6 @@ import { ProductStory } from './ProductStory'
 
 export class SpecStory extends ProductStory {
   name = 'spec'
-  respondsTo = ['spec:run-started', 'spec:run-completed']
   correlatedOn = ['productId', 'specId']
   startsWith = 'spec:run-started'
   endsWith = 'spec:run-completed'

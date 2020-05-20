@@ -12,7 +12,6 @@ export abstract class Story {
   abstract correlatedOn: string[];
   abstract startsWith: string;
   abstract endsWith: string;
-  abstract respondsTo: string[];
 
   protected get prettyContext (): string {
     return Object.entries(this.context).map(([k, v]) => `${k}: ${v}`).join(', ')

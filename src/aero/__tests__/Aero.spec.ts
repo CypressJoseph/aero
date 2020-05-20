@@ -1,16 +1,13 @@
 import pkg from '../../../package.json'
+import { Observable } from 'rxjs'
 import { Aero } from '../Aero'
 import { TrialEvent } from '../../trial/types'
 import { ProductStory } from '../../trial/ProductStory'
 import { productStore } from '../../trial/store'
-import { Observable } from 'rxjs'
 import { SpecStory } from '../../trial/SpecStory'
-
-const noop = () => {}
 
 describe(pkg.name, () => {
   const aero: Aero<TrialEvent> = new Aero(new Observable((subscriber) => {
-    subscriber.next({ kind: 'product:opened', productId: 'the-product' })
     subscriber.next({ kind: 'product:run-started', productId: 'the-product' })
     subscriber.next({ kind: 'spec:run-started', productId: 'the-product', specId: 'the-spec' })
     subscriber.next({ kind: 'test:run-started', productId: 'the-product', specId: 'the-spec', testId: 'the-test' })
@@ -18,7 +15,7 @@ describe(pkg.name, () => {
     subscriber.next({ kind: 'spec:run-completed', productId: 'the-product', specId: 'the-spec', status: 'pass' })
     subscriber.next({ kind: 'product:run-completed', productId: 'the-product', status: 'pass' })
   }))
-  const fly = () => aero.fly({ next: noop, error: noop, complete: noop })
+  const fly = () => aero.observable.subscribe()
 
   describe('story', () => {
     it('product lifecycle', async () => {
