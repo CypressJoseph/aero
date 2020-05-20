@@ -1,6 +1,7 @@
 import { SpecStory } from './SpecStory'
 import { RunCompleteEvent, Test } from './types'
 import { findOrCreateById, update } from '../../aero/util'
+import { lookupTest } from './store'
 
 export class TestStory extends SpecStory {
     name = 'test'
@@ -11,23 +12,9 @@ export class TestStory extends SpecStory {
     runStarted () {}
 
     runCompleted (e: RunCompleteEvent) {
-      this.test = { ...this.test, status: e.status }
-      this.log('completed: ' + e.status + ' -- ' + JSON.stringify(this.test))
+      this.test.status = e.status
     }
 
-    private get testId () { return this.context.testId }
-    private get test (): Test {
-      this.spec.tests = this.spec.tests || []
-      const nullTest: Test = {
-        id: this.testId,
-        description: '??',
-        status: 'not-run',
-        assertions: []
-      }
-      return findOrCreateById(this.spec.tests, this.testId, nullTest)
-    }
-
-    private set test (updated: Test) {
-      update(this.test, updated)
-    }
+    protected get testId () { return this.context.testId }
+    protected get test (): Test { return lookupTest(this.testId, this.specId, this.productId) }
 }

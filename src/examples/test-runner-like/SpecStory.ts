@@ -1,6 +1,7 @@
 import { Spec, RunCompleteEvent } from './types'
 import { ProductStory } from './ProductStory'
 import { findOrCreateById, update } from '../../aero/util'
+import { lookupSpec } from './store'
 
 export class SpecStory extends ProductStory {
   name = 'spec'
@@ -9,22 +10,15 @@ export class SpecStory extends ProductStory {
   endsWith = 'spec:run-completed'
 
   runStarted () {
-    // this.log('spec:run-started? ')
     this.spec.status = 'running'
   }
 
   runCompleted (e: RunCompleteEvent) {
-    this.spec = { ...this.spec, status: e.status }
+    // sort of annoying this works??
+    this.spec.status = e.status // = { ...this.spec, status: e.status }
   }
 
   protected get specId () { return this.context.specId }
-  protected get spec (): Spec {
-    this.product.specs = this.product.specs || []
-    const nullSpec: Spec = { id: this.specId, relativePath: '??', status: 'not-run', tests: [] }
-    return findOrCreateById(this.product.specs, this.specId, nullSpec)
-  }
-
-  protected set spec (updated: Spec) {
-    update(this.spec, updated)
-  }
+  protected get spec (): Spec { return lookupSpec(this.specId, this.productId) }
+  // protected set spec (updated: Spec) { update(this.spec, updated) }
 }

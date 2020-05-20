@@ -17,7 +17,10 @@ export abstract class Story {
     return Object.entries(this.context).map(([k, v]) => `${k}: ${v}`).join(', ')
   }
 
-  protected log (message: string) { console.log(`${this.name} (${this.prettyContext}): ${message}`) }
+  protected log (message: string) {
+    const line = `[${this.name} story (${this.prettyContext})] ${message}`
+    console.log(line)
+  }
 }
 type StoryTemplate = new () => Story
 
@@ -50,7 +53,7 @@ export class Aero<Event extends AbstractEvent> {
         const eventHandler: Function = (story as any)[journeyAction]
         const missingEventHandler = `warning: missing story event handler for ${event.kind}, e.g.: \n\n    class ${StoryKind.name} { ${journeyAction}() {...} }`
         if (eventHandler) { eventHandler.call(story, event, stream) } else { console.warn(missingEventHandler) }
-        // hmmm, after we've seen the end event...
+        // hmmm, after we've seen the end event... todo unsub?
       })
     }
   }

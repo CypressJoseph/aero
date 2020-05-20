@@ -1,9 +1,9 @@
 export type Status = 'not-run' | 'pass' | 'fail' | 'running'
 
-export type ProductID = string
-export type SpecID = string
-export type TestID = string
-export type AssertionID = string
+export type ProductID = string & { unit: 'product-id' }
+export type SpecID = string & { unit: 'spec-id' }
+export type TestID = string & { unit: 'test-id' }
+export type AssertionID = string & { unit: 'assertion-id' }
 
 export interface Product {
   id: ProductID
@@ -34,7 +34,6 @@ export interface Assertion {
   status: Status
 }
 
-type PRODUCT_OPENED = 'product:opened'
 type PRODUCT_RUN_STARTED = 'product:run-started'
 type PRODUCT_RUN_COMPLETED = 'product:run-completed'
 type SPEC_RUN_STARTED = 'spec:run-started'
@@ -43,11 +42,6 @@ type TEST_RUN_STARTED = 'test:run-started'
 type TEST_RUN_COMPLETED = 'test:run-completed'
 type ASSERT_RUN_STARTED = 'assert:run-started'
 type ASSERT_RUN_COMPLETED = 'assert:run-completed'
-
-export interface ProductOpened {
-  kind: PRODUCT_OPENED
-  productId: ProductID
-}
 
 export type RunCompleteEvent = { status: Status }
 
@@ -87,10 +81,28 @@ export type TestRunCompleted = {
   testId: TestID
 } & RunCompleteEvent
 
-export type TrialEvent = ProductOpened
-                       | ProductRunStarted
-                       | ProductRunCompleted
-                       | SpecRunStarted
-                       | SpecRunCompleted
-                       | TestRunStarted
-                       | TestRunCompleted
+export interface AssertionRunStarted {
+  kind: ASSERT_RUN_STARTED
+  productId: ProductID
+  specId: SpecID
+  testId: TestID
+  assertionId: AssertionID
+}
+
+export type AssertionRunCompleted = {
+  kind: ASSERT_RUN_COMPLETED
+  productId: ProductID
+  specId: SpecID
+  testId: TestID
+  assertionId: AssertionID
+} & RunCompleteEvent
+
+export type TrialEvent
+  = ProductRunStarted
+  | ProductRunCompleted
+  | SpecRunStarted
+  | SpecRunCompleted
+  | TestRunStarted
+  | TestRunCompleted
+  | AssertionRunStarted
+  | AssertionRunCompleted

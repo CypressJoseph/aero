@@ -1,6 +1,6 @@
 import { Story } from '../../aero'
 import { Product, RunCompleteEvent } from './types'
-import { productStore } from './store'
+import { lookupProduct, updateProduct } from './store'
 
 export class ProductStory extends Story {
   name = 'product'
@@ -17,6 +17,6 @@ export class ProductStory extends Story {
   }
 
   protected get productId () { return this.context.productId }
-  protected get product () { return productStore.get(this.productId) }
-  protected set product (prod: Product) { productStore.set(this.productId, prod) }
+  protected get product () { return lookupProduct(this.productId) }
+  protected set product (product: Product) { updateProduct(this.productId, product) }
 }
