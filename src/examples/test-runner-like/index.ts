@@ -1,3 +1,3 @@
-export * from './ProductStory'
-export * from './SpecStory'
-export * from './TestStory'
+export * from './stories/ProductStory'
+export * from './stories/SpecStory'
+export * from './stories/TestStory'

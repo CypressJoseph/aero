@@ -4,24 +4,13 @@ import { Aero } from '../Aero'
 import { TrialEvent, Product, ProductID, SpecID, TestID, AssertionID } from '../../examples/test-runner-like/types'
 import { lookupProduct } from '../../examples/test-runner-like/store'
 import { ProductStory, SpecStory, TestStory } from '../../examples/test-runner-like'
-import { AssertionStory } from '../../examples/test-runner-like/AssertionStory'
-
-const productId: ProductID = 'the-product' as ProductID
-const specId: SpecID = 'the-spec' as SpecID
-const testId: TestID = 'the-test' as TestID
-const assertId: AssertionID = 'the-assertion' as AssertionID
+import { AssertionStory } from '../../examples/test-runner-like/stories/AssertionStory'
+import { simpleRun, productId } from '../../examples/test-runner-like/fixtures'
 
 describe(pkg.name, () => {
-  const aero: Aero<TrialEvent> = new Aero(new Observable((subscriber) => {
-    subscriber.next({ kind: 'product:run-started', productId })
-    subscriber.next({ kind: 'spec:run-started', productId, specId })
-    subscriber.next({ kind: 'test:run-started', productId, specId, testId })
-    subscriber.next({ kind: 'assert:run-started', productId, specId, testId, assertionId: assertId })
-    subscriber.next({ kind: 'assert:run-completed', productId, specId, testId, assertionId: assertId, status: 'pass' })
-    subscriber.next({ kind: 'test:run-completed', productId, specId, testId, status: 'pass' })
-    subscriber.next({ kind: 'spec:run-completed', productId, specId, status: 'pass' })
-    subscriber.next({ kind: 'product:run-completed', productId, status: 'pass' })
-  }))
+  const observable: Observable<TrialEvent> =
+    new Observable(sub => simpleRun.forEach(e => sub.next(e)))
+  const aero: Aero<TrialEvent> = new Aero(observable)
 
   let product: Product
   beforeEach(() => {
@@ -29,6 +18,7 @@ describe(pkg.name, () => {
     aero.play(...stories)
     aero.observable.subscribe()
     product = lookupProduct(productId)
+    // console.log('---> product: ' + JSON.stringify(product))
   })
 
   describe('story', () => {
@@ -46,6 +36,7 @@ describe(pkg.name, () => {
     it('assert', async () => {
       expect(product.specs[0].tests[0].assertions?.length).toBe(1)
       expect(product.specs[0].tests[0].assertions[0].status).toBe('pass')
+      expect(product.specs[0].tests[0].assertions[0].actual).toBe('hello world')
     })
   })
 })
