@@ -1,20 +1,21 @@
-# aero
+# aerolith
 
-## synopsis
+## Synopsis
 
-wrap around observables and provide some higher-order management/routing functions...
+Microframework for correlating events from observables
 
-## stories
+## Stories
 
-the core model is a `Story` object that describes the ongoing 'journey' of a domain model
+The core model is a `Story` object that describes the ongoing 'journey' of a domain model
 as events are processed
 
-we 'route' events matching the attributes that the story model specifies as its correlation identifiers
+We route events to matching story methods, given the event correlates the attributes that the story model specifies.
 
-this routing ends up making the story look something like a domain controller
+The story ends up looking something like a domain controller:
 
-```
-export class TestStory extends SpecStory {
+```typescript
+import { Story } from 'aerolith'
+export class TestStory extends Story {
     name = 'test'
     correlatedOn = ['productId', 'specId', 'testId']
     startsWith = 'test:run-started'
@@ -23,26 +24,19 @@ export class TestStory extends SpecStory {
     runStarted () {}
 
     runCompleted (e: RunCompleteEvent) {
-      this.test = { ...this.test, status: e.status }
-      this.log('completed: ' + e.status + ' -- ' + JSON.stringify(this.test))
+      this.test.status = status: e.status
     }
 
     // ...
 }
 ```
 
-essentially, aero just needs you to tell it which stories to play, and which observable it should monitor.
+### Setup 
 
-```
-  const aero: Aero<TrialEvent> = new Aero(new Observable((subscriber) => {
-    subscriber.next({ kind: 'product:run-started', productId: 'the-product' })
-    subscriber.next({ kind: 'spec:run-started', productId: 'the-product', specId: 'the-spec' })
-    subscriber.next({ kind: 'test:run-started', productId: 'the-product', specId: 'the-spec', testId: 'the-test' })
-    subscriber.next({ kind: 'test:run-completed', productId: 'the-product', specId: 'the-spec', testId: 'the-test', status: 'pass' })
-    subscriber.next({ kind: 'spec:run-completed', productId: 'the-product', specId: 'the-spec', status: 'pass' })
-    subscriber.next({ kind: 'product:run-completed', productId: 'the-product', status: 'pass' })
-  }))
+aero expects you to tell it which stories to play, and which observable it should monitor.
 
+```typescript
+  const aero: Aero<TrialEvent> = new Aero(observable)
   const stories = [ProductStory, SpecStory, TestStory]
   aero.play(...stories)
   aero.observable.subscribe()
