@@ -13,12 +13,11 @@ describe(pkg.name, () => {
   const aero: Aero<TrialEvent> = new Aero(observable)
 
   let product: Product
-  beforeEach(() => {
+  beforeAll(() => {
     const stories = [ProductStory, SpecStory, TestStory, AssertionStory]
     aero.play(...stories)
     aero.observable.subscribe()
     product = lookupProduct(productId)
-    // console.log('---> product: ' + JSON.stringify(product))
   })
 
   describe('story', () => {
