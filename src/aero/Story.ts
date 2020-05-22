@@ -1,6 +1,6 @@
 export abstract class Story {
   context: any = {}
-  timeout: number = 300
+  timeout: number = 150
   abstract name: string;
   abstract correlatedOn: string[];
   abstract startsWith: string;
