@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import { Observable } from 'rxjs'
-import { filter } from 'rxjs/operators'
+import { filter, takeWhile } from 'rxjs/operators'
 import { toCamel } from './util'
 import { Story } from './Story'
 
@@ -23,11 +23,12 @@ export class Chronicler<Event extends AbstractEvent> {
       const correlatedEvents = filter((e: Event) => correlate.every((attribute: string) =>
         (initialEvent as any)[attribute] === (e as any)[attribute]
       ))
+      const untilItIsDone = takeWhile((event: Event) => event.kind !== story.endsWith, true)
       const correlationIds = correlate.map((attr: string) => [attr, (initialEvent as any)[attr]])
       story.context = Object.fromEntries(correlationIds)
-      // todo we want to pipe UNTIL we see the tail/tombstone event..
-      // [ie and then forget about this instance of the story *entirely*]
-      this.observable.pipe(correlatedEvents).forEach(event => this.route(event, story, StoryKind))
+      this.observable.pipe(correlatedEvents, untilItIsDone).forEach(event => {
+        this.route(event, story, StoryKind)
+      })
     }
   }
 
