@@ -48,8 +48,10 @@ aero expects you to tell it which stories to play, and which observable it shoul
 
 ## Notes
 
-This solution means a lot of implicit structure is taken from the event name. The event name is expected to be of the form `category:something-happened`. We currently assume the "category" string appearing before the colon is an implicit namespace
+* This solution means a lot of implicit structure is taken from the event name. The event name is expected to be of the form `category:something-happened`. We currently assume the "category" string appearing before the colon is an implicit namespace
 
-This "channel separation" exists primarily in order not to send redundant or inaccurate events, but a limitation is that we are currently limited to the single domain a story specifies (so a story couldn't monitor events across "domains" for now). 
+  This "channel separation" exists primarily in order not to send redundant or inaccurate events, but a limitation is that we are currently limited to the single domain a story specifies (so a story couldn't monitor events across "domains" for now). 
 
-One thought is that stories might specify the 'channels' they are interested in, but note this creates some ambiguity with the "controller-style" routing mechanism. That is: if two events in different domains happen to have the same name (i.e., are identical 'after the colon'), they would end up incorrectly invoking the same story action...
+  One thought is that stories might specify the 'channels' they are interested in, but note this creates some ambiguity with the "controller-style" routing mechanism. That is: if two events in different domains happen to have the same name (i.e., are identical 'after the colon'), they would end up incorrectly invoking the same story action...
+
+* We're still listening to events even after we see the `endsWith`. More rxjs research indicated

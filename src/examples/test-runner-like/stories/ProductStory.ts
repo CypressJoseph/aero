@@ -19,6 +19,6 @@ export class ProductStory extends Story {
   }
 
   get productId () { return this.context.productId }
-  get product () { return lookupProduct(this.productId) }
+  get product (): Product { return lookupProduct(this.productId) }
   set product (product: Product) { updateProduct(this.productId, product) }
 }
