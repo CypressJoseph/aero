@@ -1,14 +1,21 @@
+
 /* eslint-disable no-useless-constructor */
-import { Observable } from 'rxjs'
-import { filter, takeWhile } from 'rxjs/operators'
+import { Observable, throwError, of, OperatorFunction } from 'rxjs'
+import { filter, takeWhile, timeout, catchError } from 'rxjs/operators'
 import { toCamel } from './util'
 import { Story } from './Story'
+import Pino from 'pino'
 
 export type AbstractEvent = { kind: string }
 export type StoryTemplate = new () => Story
 
 export class Chronicler<Event extends AbstractEvent> {
-  constructor (public observable: Observable<Event>) {}
+  log: Pino.Logger
+
+  constructor (public observable: Observable<Event>) {
+    this.log = Pino({ name: 'aero', prettyPrint: true })
+  }
+
   study (StoryKind: StoryTemplate) {
     const modelStory = new StoryKind()
     const matchingInitial = filter((e: Event) => e.kind === modelStory.startsWith)
@@ -17,18 +24,37 @@ export class Chronicler<Event extends AbstractEvent> {
 
   // create a story from this event and monitor for further developments
   private relate (StoryKind: StoryTemplate) {
-    return (initialEvent: Event) => {
+    const modelStory = new StoryKind()
+    const { correlatedOn: correlate } = modelStory
+    return async (initialEvent: Event) => {
+      const startedAt = new Date().getTime()
       const story: Story = new StoryKind()
-      const { correlatedOn: correlate } = story
+      const correlationIds = correlate.map((attr: string) => [attr, (initialEvent as any)[attr]])
+      story.context = Object.fromEntries(correlationIds)
+      const log = this.log.child({ story: StoryKind.name, ...story.context })
+      const timely = timeout<Event>(story.timeout)
       const correlatedEvents = filter((e: Event) => correlate.every((attribute: string) =>
         (initialEvent as any)[attribute] === (e as any)[attribute]
       ))
       const untilItIsDone = takeWhile((event: Event) => event.kind !== story.endsWith, true)
-      const correlationIds = correlate.map((attr: string) => [attr, (initialEvent as any)[attr]])
-      story.context = Object.fromEntries(correlationIds)
-      this.observable.pipe(correlatedEvents, untilItIsDone).forEach(event => {
-        this.route(event, story, StoryKind)
+      const withFriendlyTimeouts: OperatorFunction<Event, Event> = catchError((err) => {
+        log.warn(`timed out waiting for ${story.endsWith} (${story.timeout}ms elapsed)`)
+        return throwError(err)
       })
+      const plot = this.observable.pipe(
+        timely, correlatedEvents, untilItIsDone,
+        withFriendlyTimeouts
+      )
+      let timedOut = false
+      await plot.forEach(event => {
+        log.debug(event.kind)
+        this.route(event, story, StoryKind)
+      }).catch(e => { timedOut = true; throwError(e) })
+      if (!timedOut) {
+        const finishedAt = new Date().getTime()
+        const elapsed = finishedAt - startedAt
+        log.debug(`${StoryKind.name} finished in ${elapsed}ms`)
+      }
     }
   }
 
@@ -46,11 +72,11 @@ export class Chronicler<Event extends AbstractEvent> {
         storyKind.name,
         journeyAction
       )
-      console.warn(missingEventHandlerMessage)
+      this.log.warn(missingEventHandlerMessage)
     }
   }
 
   private missingEventHandlerWarning (kind: string, storyName: string, journeyAction: string) {
-    return `[aero] Warning: Missing story event handler for ${kind}, e.g.:\n\n    class ${storyName} { ${journeyAction}() {...} }`
+    return `Missing story event handler for ${kind}, e.g.:\n\n    class ${storyName} { ${journeyAction}() {...} }`
   }
 }

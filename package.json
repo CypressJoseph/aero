@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "scripts": { "test": "jest" },
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
+    "pino": "^6.2.1",
     "rxjs": "^6.5.5"
   },
   "devDependencies": {
     "@types/jest": "^25.2.2",
+    "@types/pino": "^6.0.1",
     "@types/rx": "^4.1.2",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
@@ -20,8 +24,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^26.0.1",
+    "pino-pretty": "^4.0.0",
     "ts-jest": "^26.0.0",
     "typescript": "^3.9.2"
   }
- 
 }
